@@ -1,0 +1,32 @@
+== XBEL
+
+Homepage::  xbel.rubyforge.org[http://xbel.rubyforge.org/]
+Author::    Bob Aman  (mailto:bob@sporkmonger.com)
+Copyright:: Copyright © 2008 Bob Aman
+License::   MIT
+
+== Description
+
+XBEL is the XML Bookmark Exchange Library.  This parser reads bookmarks from
+the various bookmark export formats used by browsers and web services and
+translates them to XBEL, CSV, JSON, or the HTML format used by Firefox.
+
+== Features
+
+* The XBEL library can read XBEL, CSV, JSON, or HTML formatted bookmark lists.
+* If a format cannot be identified, it can extract URIs from a file.
+* If metadata is missing, it can retrieve and parse HTML to obtain it.
+* All bookmark lists can be outputted as XBEL, CSV, JSON, or HTML.
+
+== Example Usage
+
+# Some code goes here.
+
+== Requirements
+
+* XBEL depends on libxml-ruby 0.8.3.
+* XBEL depends on addressable 1.0.4.
+
+== Install
+
+* sudo gem install xbel
