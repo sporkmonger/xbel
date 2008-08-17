@@ -33,13 +33,15 @@ module XBEL
     # Returns the XBEL element title.
     def title
       @title ||= (begin
-        title_node = self.node.find_first("title")
-        if title_node && title_node.content
-          title = title_node.content.strip
+        if self.node
+          title_node = self.node.find_first("title")
+          if title_node && title_node.content
+            title = title_node.content.strip
+          end
+          # Eww, but prevents segfaults
+          title_node = nil
+          GC.start
         end
-        # Eww, but prevents segfaults
-        title_node = nil
-        GC.start
         defined?(title) ? title : nil
       end)
     end
@@ -52,13 +54,15 @@ module XBEL
     # Returns the XBEL element description.
     def desc
       @desc ||= (begin
-        desc_node = self.node.find_first("desc")
-        if desc_node && desc_node.content
-          desc = desc_node.content.strip
+        if self.node
+          desc_node = self.node.find_first("desc")
+          if desc_node && desc_node.content
+            desc = desc_node.content.strip
+          end
+          # Eww, but prevents segfaults
+          desc_node = nil
+          GC.start
         end
-        # Eww, but prevents segfaults
-        desc_node = nil
-        GC.start
         defined?(desc) ? desc : nil
       end)
     end
@@ -74,13 +78,15 @@ module XBEL
     def info
       @info ||= (begin
         info = []
-        metadata_nodes = self.node.find("info/metadata")
-        for metadata_node in metadata_nodes
-          info << XBEL::Metadata.new(metadata_node)
+        if self.node
+          metadata_nodes = self.node.find("info/metadata")
+          for metadata_node in metadata_nodes
+            info << XBEL::Metadata.new(metadata_node)
+          end
+          # Eww, but prevents segfaults
+          metadata_nodes = nil
+          GC.start
         end
-        # Eww, but prevents segfaults
-        metadata_nodes = nil
-        GC.start
         info
       end)
     end

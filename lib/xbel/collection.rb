@@ -71,17 +71,19 @@ module XBEL
     def children
       @children ||= (begin
         children = []
-        child_nodes = self.node.children
-        for child_node in child_nodes
-          case child_node.name
-          when "bookmark"
-            children << XBEL::Bookmark.new(child_node)
-          when "folder"
-            children << XBEL::Folder.new(child_node)
-          when "separator"
-            children << XBEL::Separator.new(child_node)
-          when "alias"
-            children << XBEL::Alias.new(child_node)
+        if self.node
+          child_nodes = self.node.children
+          for child_node in child_nodes
+            case child_node.name
+            when "bookmark"
+              children << XBEL::Bookmark.new(child_node)
+            when "folder"
+              children << XBEL::Folder.new(child_node)
+            when "separator"
+              children << XBEL::Separator.new(child_node)
+            when "alias"
+              children << XBEL::Alias.new(child_node)
+            end
           end
         end
         children

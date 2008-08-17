@@ -23,3 +23,5 @@
 
 require "xbel/version"
 require "xbel/parser"
+require "xbel/generator"
+require "xbel/reformat"

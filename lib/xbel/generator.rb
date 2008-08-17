@@ -23,6 +23,7 @@
 
 require "addressable/uri"
 require "libxml"
+require "fastercsv"
 
 require "xbel/version"
 require "xbel/common"
@@ -33,29 +34,34 @@ require "xbel/separator"
 require "xbel/alias"
 
 module XBEL
-  # Parses an XBEL formatted xml string into an XBEL collection.
-  def self.parse_xbel(xml_string)
-    LibXML::XML::Parser.default_keep_blanks = false
-    LibXML::XML::Parser.default_substitute_entities = true
-    parser = LibXML::XML::Parser.new
-    parser.string = xml_string
-    doc = parser.parse
-    return doc ? XBEL::Collection.new(doc.root) : nil
+  # Generates an XBEL formatted xml String from an XBEL collection.
+  def self.generate_xbel(xbel_collection)
   end
 
-  # Parses an unknown file format into a flat XBEL collection.
-  def self.parse_unknown(unknown_string)
-    uris = Addressable::URI.extract(unknown_string)
-    collection = XBEL::Collection.new
-    for uri in uris
-      bookmark = XBEL::Bookmark.new
-      bookmark.href = uri
-      collection.children << bookmark
+  # Generates a CSV formatted String from an XBEL collection.
+  def self.generate_csv(xbel_collection)
+    csv_string = ::FasterCSV.generate do |csv|
+      csv << ["ID", "Title", "URI", "Path", "Added", "Modified", "Visited"]
+      generate_rows = lambda do |collection, path|
+        for item in collection.children
+          case item
+          when XBEL::Bookmark
+            csv << [
+              item.id,
+              item.title,
+              item.href,
+              path,
+              item.added,
+              item.modified,
+              item.visited
+            ]
+          when XBEL::Folder
+            generate_rows.call(item, path + item.title + "/")
+          end
+        end
+      end
+      generate_rows.call(xbel_collection, "/")
     end
-    return collection
-  end
-  
-  # TODO: Write retrieve library and use it here.
-  def self.open(xml_uri)
+    return csv_string
   end
 end

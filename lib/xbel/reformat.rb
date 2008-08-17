@@ -33,29 +33,14 @@ require "xbel/separator"
 require "xbel/alias"
 
 module XBEL
-  # Parses an XBEL formatted xml string into an XBEL collection.
-  def self.parse_xbel(xml_string)
-    LibXML::XML::Parser.default_keep_blanks = false
-    LibXML::XML::Parser.default_substitute_entities = true
-    parser = LibXML::XML::Parser.new
-    parser.string = xml_string
-    doc = parser.parse
-    return doc ? XBEL::Collection.new(doc.root) : nil
-  end
-
-  # Parses an unknown file format into a flat XBEL collection.
-  def self.parse_unknown(unknown_string)
-    uris = Addressable::URI.extract(unknown_string)
-    collection = XBEL::Collection.new
-    for uri in uris
-      bookmark = XBEL::Bookmark.new
-      bookmark.href = uri
-      collection.children << bookmark
-    end
-    return collection
-  end
-  
-  # TODO: Write retrieve library and use it here.
-  def self.open(xml_uri)
+  # Reformats an input by calling the appropriate parse method, then returning
+  # the output from the appropriate generate method.
+  def self.reformat(input_string, input_format, output_format)
+    xbel_collection = self.send(
+      ("parse_" + input_format.to_s).to_sym, input_string
+    )
+    return self.send(
+      ("generate_" + output_format.to_s).to_sym, xbel_collection
+    )
   end
 end

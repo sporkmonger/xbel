@@ -2,8 +2,8 @@ spec_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 require File.join(spec_dir, "spec_helper")
 
 describe XBEL do
-  it "should be able to parse a simple XBEL file" do
-    xbel = <<-XBEL
+  before do
+    @xbel_string = <<-XBEL
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE xbel
   PUBLIC "+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML"
@@ -34,8 +34,11 @@ describe XBEL do
   <separator />
   <alias ref="b1" />
 </xbel>
-XBEL
-    collection = XBEL.parse_xbel(xbel)
+    XBEL
+  end
+  
+  it "should be able to parse a simple XBEL file" do
+    collection = XBEL.parse_xbel(@xbel_string)
     collection.title.should == "Lesezeichen!"
     collection.desc.should ==
       "Lernen von XBEL am Beispiel von zwei Lesezeichen und einer Verknüpfung"
@@ -94,5 +97,20 @@ XBEL
     collection.children[2].node.should_not == nil
     collection.children[2].ref.should == "b1"
     collection.children[2].inspect.should =~ /Alias/
+  end
+
+  it "should be able to reformat a simple XBEL file" do
+    csv_output = XBEL.reformat(@xbel_string, :xbel, :csv)
+    lines = csv_output.split("\n")
+    lines[0].should ==
+      "ID,Title,URI,Path,Added,Modified,Visited"
+    lines[1].should ==
+      "b0,Wikimedia Foundation,http://wikimediafoundation.org/,/Wiki/," +
+      "Sun Nov 11 00:00:00 -0500 2007,Wed Nov 14 00:00:00 -0500 2007," +
+      "Wed Nov 14 00:00:00 -0500 2007"
+    lines[2].should ==
+      "b1,Wikipedia,http://de.wikipedia.org/,/Wiki/," +
+      "Sun Nov 11 00:00:00 -0500 2007,Wed Nov 14 00:00:00 -0500 2007," +
+      "Thu Dec 27 00:00:00 -0500 2007"
   end
 end
