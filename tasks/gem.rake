@@ -31,7 +31,7 @@ namespace :gem do
     p.need_tar = true
     p.need_zip = true
   end
-  
+
   desc "Show information about the gem"
   task :debug do
     puts GEM_SPEC.to_ruby
